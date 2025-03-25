@@ -1,3 +1,4 @@
+
 import React from 'react';
 import { useSequenceStore } from '../../store/sequenceStore';
 import { Button } from '@/components/ui/button';
@@ -133,7 +134,7 @@ export const SequenceGenerator: React.FC = () => {
         )}
       </div>
       
-      <div className="border-t border-border p-4">
+      <div className="border-t border-border p-4 sticky bottom-0 bg-background">
         <div className="flex gap-2 items-start">
           <Textarea
             value={prompt}
