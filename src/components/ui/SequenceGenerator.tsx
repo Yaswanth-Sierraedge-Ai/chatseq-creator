@@ -6,6 +6,9 @@ import { Textarea } from '@/components/ui/textarea';
 import { GeneratorHeader } from './GeneratorHeader';
 import { Send, User, Bot } from 'lucide-react';
 import { toast } from 'sonner';
+import axios from 'axios';
+
+const API_URL = 'http://localhost:8000/api';
 
 export const SequenceGenerator: React.FC = () => {
   const { currentSequence, updateSequence, addSequence } = useSequenceStore();
@@ -20,7 +23,7 @@ export const SequenceGenerator: React.FC = () => {
     }
   }, [conversation]);
   
-  const handleGenerate = () => {
+  const handleGenerate = async () => {
     if (!prompt.trim()) {
       toast.error("Please enter a prompt");
       return;
@@ -29,13 +32,15 @@ export const SequenceGenerator: React.FC = () => {
     setConversation(prev => [...prev, { role: 'user', content: prompt }]);
     setIsGenerating(true);
     
-    setTimeout(() => {
-      const generatedContent = generateTestSequence(prompt);
+    try {
+      // Call the backend to generate the test sequence
+      const response = await axios.post(`${API_URL}/generate`, { prompt: prompt.trim() });
+      const generatedContent = response.data.generatedContent;
       
       if (currentSequence) {
-        updateSequence(currentSequence.id, generatedContent);
+        await updateSequence(currentSequence.id, generatedContent);
       } else {
-        addSequence(`Sequence ${new Date().toLocaleTimeString()}`, generatedContent);
+        await addSequence(`Sequence ${new Date().toLocaleTimeString()}`, generatedContent);
       }
       
       setConversation(prev => [...prev, { 
@@ -44,49 +49,18 @@ export const SequenceGenerator: React.FC = () => {
       }]);
       
       setPrompt('');
-      setIsGenerating(false);
       toast.success("Test sequence generated successfully");
-    }, 1500);
-  };
-  
-  const generateTestSequence = (input: string): string => {
-    const lines = [
-      `// Test Sequence for: ${input}`,
-      `// Generated on: ${new Date().toLocaleString()}`,
-      '',
-      'describe("Test Suite", () => {',
-      '  beforeEach(() => {',
-      '    // Setup code',
-      '    console.log("Setting up test environment");',
-      '  });',
-      '',
-      '  it("should validate the main functionality", () => {',
-      '    // Arrange',
-      '    const testData = {',
-      '      input: "' + input.replace(/"/g, '\\"') + '",',
-      '      expectedOutput: "success"',
-      '    };',
-      '',
-      '    // Act',
-      '    const result = processInput(testData.input);',
-      '',
-      '    // Assert',
-      '    expect(result).toEqual(testData.expectedOutput);',
-      '  });',
-      '',
-      '  it("should handle edge cases", () => {',
-      '    // Additional test logic here',
-      '    expect(true).toBeTruthy();',
-      '  });',
-      '',
-      '  afterEach(() => {',
-      '    // Cleanup code',
-      '    console.log("Cleaning up after test");',
-      '  });',
-      '});',
-    ];
-    
-    return lines.join('\n');
+    } catch (error) {
+      console.error("Error generating sequence:", error);
+      toast.error("Failed to generate test sequence");
+      
+      setConversation(prev => [...prev, { 
+        role: 'assistant', 
+        content: "Sorry, there was an error generating the test sequence. Please try again." 
+      }]);
+    } finally {
+      setIsGenerating(false);
+    }
   };
   
   return (

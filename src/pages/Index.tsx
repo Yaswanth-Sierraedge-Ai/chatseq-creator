@@ -5,15 +5,12 @@ import { SequenceGenerator } from '../components/ui/SequenceGenerator';
 import { useSequenceStore } from '../store/sequenceStore';
 
 const Index = () => {
-  const { currentSequence, addSequence } = useSequenceStore();
+  const { fetchSequences } = useSequenceStore();
   
-  // Create a default sequence if none exists
+  // Fetch sequences when the component mounts
   React.useEffect(() => {
-    if (!currentSequence) {
-      const timestamp = new Date().toLocaleTimeString();
-      addSequence(`My First Sequence`, '');
-    }
-  }, [currentSequence, addSequence]);
+    fetchSequences();
+  }, [fetchSequences]);
   
   return (
     <MainLayout>

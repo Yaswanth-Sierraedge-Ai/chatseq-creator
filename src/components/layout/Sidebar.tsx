@@ -1,10 +1,11 @@
 
 import React from 'react';
 import { useSequenceStore, type Sequence } from '../../store/sequenceStore';
-import { Code, ChevronLeft, ChevronRight, Settings, Trash } from 'lucide-react';
+import { Code, ChevronLeft, ChevronRight, Trash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { SequenceOutput } from '../ui/SequenceOutput';
+import { toast } from 'sonner';
 
 interface SidebarProps {
   collapsed: boolean;
@@ -12,7 +13,13 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
-  const { sequences, currentSequence, setCurrentSequence, deleteSequence, addSequence } = useSequenceStore();
+  const { sequences, currentSequence, setCurrentSequence, deleteSequence, loading, error } = useSequenceStore();
+
+  React.useEffect(() => {
+    if (error) {
+      toast.error(error);
+    }
+  }, [error]);
 
   return (
     <aside
@@ -42,9 +49,16 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) =>
 
         {/* Output area */}
         <div className="flex-1 overflow-auto p-4">
-          {currentSequence ? (
+          {loading && (
+            <div className="h-full flex items-center justify-center text-muted-foreground">
+              <div className="text-center">
+                <p>Loading...</p>
+              </div>
+            </div>
+          )}
+          {!loading && currentSequence ? (
             <SequenceOutput content={currentSequence.content} />
-          ) : (
+          ) : !loading ? (
             <div className="h-full flex items-center justify-center text-muted-foreground">
               <div className="text-center">
                 <Code size={24} className="mx-auto mb-2 opacity-50" />
@@ -52,7 +66,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) =>
                 <p className="text-sm mt-1">Enter a prompt to generate a test sequence</p>
               </div>
             </div>
-          )}
+          ) : null}
         </div>
 
         {/* Sequences list in collapsed sidebar */}
