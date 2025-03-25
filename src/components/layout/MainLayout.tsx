@@ -14,7 +14,7 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   };
   
   return (
-    <div className="flex h-screen w-full overflow-hidden">
+    <div className="flex h-screen w-full overflow-hidden bg-gradient-to-br from-background to-background/80">
       <main className={`flex-1 flex flex-col transition-all duration-300 ease-in-out overflow-hidden ${sidebarCollapsed ? 'mr-20' : 'mr-64'}`}>
         {children}
       </main>

@@ -14,7 +14,7 @@ const Index = () => {
   
   return (
     <MainLayout>
-      <div className="min-h-screen">
+      <div className="min-h-screen flex flex-col">
         <SequenceGenerator />
       </div>
     </MainLayout>

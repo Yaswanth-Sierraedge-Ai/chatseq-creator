@@ -4,9 +4,11 @@ import { useSequenceStore } from '../../store/sequenceStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { GeneratorHeader } from './GeneratorHeader';
-import { Send, User, Bot } from 'lucide-react';
+import { Send, User, Bot, Loader } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
+import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { cn } from '@/lib/utils';
 
 const API_URL = 'http://localhost:8000/api';
 
@@ -62,20 +64,30 @@ export const SequenceGenerator: React.FC = () => {
       setIsGenerating(false);
     }
   };
+
+  const handleKeyDown = (e: React.KeyboardEvent) => {
+    if (e.key === 'Enter' && e.metaKey) {
+      e.preventDefault();
+      handleGenerate();
+    }
+  };
   
   return (
-    <div className="flex flex-col h-full">
+    <div className="flex flex-col h-full bg-background/50">
       <GeneratorHeader />
       
       <div 
         ref={conversationRef}
-        className="flex-1 p-6 overflow-auto"
+        className="flex-1 p-6 overflow-auto scrollbar-none"
       >
         {conversation.length === 0 ? (
           <div className="h-full flex items-center justify-center text-muted-foreground">
-            <div className="text-center max-w-md">
-              <h3 className="text-lg font-medium mb-2">Welcome to Test Sequence Generator</h3>
-              <p className="text-sm">
+            <div className="text-center max-w-md p-8 rounded-xl bg-card/30 backdrop-blur-sm border border-border/20 shadow-sm">
+              <div className="inline-flex p-3 mb-4 rounded-full bg-primary/10">
+                <Bot size={32} className="text-primary" />
+              </div>
+              <h3 className="text-xl font-medium mb-3">Test Sequence Generator</h3>
+              <p className="text-sm leading-relaxed text-muted-foreground">
                 Enter a description of what kind of test sequence you want to generate in the input box below.
                 The generated code will appear in the sidebar.
               </p>
@@ -86,53 +98,77 @@ export const SequenceGenerator: React.FC = () => {
             {conversation.map((message, index) => (
               <div 
                 key={index} 
-                className={`flex ${message.role === 'user' ? 'justify-end' : 'justify-start'}`}
+                className={cn(
+                  "animate-slide-in flex max-w-3xl mx-auto",
+                  message.role === 'user' ? "justify-end" : "justify-start"
+                )}
               >
-                <div className={`flex max-w-3xl ${message.role === 'user' ? 'flex-row-reverse' : 'flex-row'}`}>
-                  <div className={`flex h-8 w-8 shrink-0 items-center justify-center rounded-full ${
-                    message.role === 'user' ? 'bg-primary text-primary-foreground ml-2' : 'bg-muted mr-2'
-                  }`}>
-                    {message.role === 'user' ? <User size={16} /> : <Bot size={16} />}
-                  </div>
-                  <div className={`rounded-lg px-4 py-3 ${
+                <div className={cn(
+                  "flex gap-3 max-w-[90%]",
+                  message.role === 'user' ? "flex-row-reverse" : "flex-row"
+                )}>
+                  <Avatar className="h-8 w-8 shrink-0">
+                    <AvatarFallback className={cn(
+                      message.role === 'user' ? "bg-primary text-primary-foreground" : "bg-muted"
+                    )}>
+                      {message.role === 'user' ? <User size={14} /> : <Bot size={14} />}
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className={cn(
+                    "rounded-lg px-4 py-3 shadow-sm",
                     message.role === 'user' 
-                      ? 'bg-primary text-primary-foreground' 
-                      : 'bg-muted'
-                  }`}>
+                      ? "bg-primary text-primary-foreground rounded-br-none" 
+                      : "bg-muted rounded-bl-none"
+                  )}>
                     <p className="text-sm">{message.content}</p>
                   </div>
                 </div>
               </div>
             ))}
+            {isGenerating && (
+              <div className="flex justify-start max-w-3xl mx-auto animate-fade-in">
+                <div className="flex gap-3">
+                  <Avatar className="h-8 w-8 shrink-0">
+                    <AvatarFallback className="bg-muted">
+                      <Bot size={14} />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="rounded-lg rounded-bl-none px-4 py-3 bg-muted shadow-sm flex items-center gap-2">
+                    <Loader size={16} className="animate-spin" />
+                    <p className="text-sm">Generating sequence...</p>
+                  </div>
+                </div>
+              </div>
+            )}
           </div>
         )}
       </div>
       
-      <div className="border-t border-border p-4 sticky bottom-0 bg-background">
-        <div className="flex gap-2 items-start">
-          <Textarea
-            value={prompt}
-            onChange={(e) => setPrompt(e.target.value)}
-            placeholder="Describe the test sequence you want to generate..."
-            className="resize-none min-h-[80px]"
-            onKeyDown={(e) => {
-              if (e.key === 'Enter' && e.metaKey) {
-                handleGenerate();
-              }
-            }}
-          />
-          <Button 
-            className="shrink-0" 
-            onClick={handleGenerate}
-            disabled={isGenerating || !prompt.trim()}
-          >
-            <Send size={16} className="mr-2" />
-            {isGenerating ? 'Generating...' : 'Generate'}
-          </Button>
+      <div className="border-t border-border/40 p-4 sticky bottom-0 bg-background/80 backdrop-blur-md shadow-md">
+        <div className="max-w-3xl mx-auto">
+          <div className="flex gap-2 items-start">
+            <Textarea
+              value={prompt}
+              onChange={(e) => setPrompt(e.target.value)}
+              placeholder="Describe the test sequence you want to generate..."
+              className="resize-none min-h-[80px] bg-background/60 border-border/40 focus-visible:ring-primary/40"
+              onKeyDown={handleKeyDown}
+            />
+            <Button 
+              className="shrink-0 transition-all" 
+              onClick={handleGenerate}
+              disabled={isGenerating || !prompt.trim()}
+            >
+              <Send size={16} className={cn("transition-transform", isGenerating ? "opacity-0" : "mr-2")} />
+              {isGenerating ? (
+                <Loader size={16} className="animate-spin absolute" />
+              ) : 'Generate'}
+            </Button>
+          </div>
+          <p className="text-xs text-muted-foreground mt-2 text-right">
+            Press ⌘ + Enter to generate
+          </p>
         </div>
-        <p className="text-xs text-muted-foreground mt-2 text-right">
-          Press ⌘ + Enter to generate
-        </p>
       </div>
     </div>
   );
