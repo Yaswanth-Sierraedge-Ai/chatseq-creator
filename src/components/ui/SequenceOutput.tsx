@@ -18,33 +18,26 @@ export const SequenceOutput: React.FC<SequenceOutputProps> = ({ content }) => {
   };
   
   if (!content) {
-    return (
-      <div className="h-full flex items-center justify-center text-muted-foreground">
-        <div className="text-center">
-          <p>No output generated yet</p>
-          <p className="text-sm mt-1">Enter a prompt to generate a test sequence</p>
-        </div>
-      </div>
-    );
+    return null;
   }
   
   return (
     <div className="relative h-full">
-      <pre className="overflow-auto p-6 rounded-md bg-secondary/50 h-full text-sm relative">
-        <div className="absolute top-4 right-4">
+      <pre className="overflow-auto p-4 rounded-md bg-secondary/50 h-full text-sm relative">
+        <div className="absolute top-2 right-2">
           <Button
             variant="ghost"
             size="icon"
             onClick={copyToClipboard}
             className={cn(
-              "transition-all",
+              "h-6 w-6 transition-all",
               copied ? "text-green-500" : "text-muted-foreground hover:text-foreground"
             )}
           >
-            {copied ? <Check size={16} /> : <Clipboard size={16} />}
+            {copied ? <Check size={14} /> : <Clipboard size={14} />}
           </Button>
         </div>
-        <code className="whitespace-pre-wrap">{content}</code>
+        <code className="whitespace-pre-wrap text-xs">{content}</code>
       </pre>
     </div>
   );

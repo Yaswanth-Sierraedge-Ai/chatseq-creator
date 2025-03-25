@@ -15,13 +15,13 @@ export const MainLayout: React.FC<MainLayoutProps> = ({ children }) => {
   
   return (
     <div className="flex h-screen w-full overflow-hidden">
-      <Sidebar collapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
-      
-      <main className={`flex-1 transition-all duration-300 ease-in-out overflow-auto ${sidebarCollapsed ? 'ml-20' : 'ml-64'}`}>
+      <main className={`flex-1 transition-all duration-300 ease-in-out overflow-auto ${sidebarCollapsed ? 'mr-20' : 'mr-64'}`}>
         <div className="h-full">
           {children}
         </div>
       </main>
+      
+      <Sidebar collapsed={sidebarCollapsed} toggleSidebar={toggleSidebar} />
     </div>
   );
 };
