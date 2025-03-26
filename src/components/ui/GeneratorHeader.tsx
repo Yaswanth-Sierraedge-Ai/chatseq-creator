@@ -6,13 +6,13 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from '@/comp
 
 export const GeneratorHeader: React.FC = () => {
   return (
-    <div className="z-10 backdrop-blur-md bg-background/30 border-b border-white/5 px-6 py-4 sticky top-0">
+    <div className="z-10 bg-white border-b border-black px-6 py-4 sticky top-0">
       <div className="flex justify-between items-center max-w-7xl mx-auto">
         <h1 className="text-xl font-medium flex items-center gap-2">
-          <span className="bg-primary/10 text-primary p-1.5 rounded-md">
-            <Sparkles size={20} className="animate-pulse" />
+          <span className="bg-[#91C8E4]/10 text-[#91C8E4] p-1.5 rounded-md">
+            <Sparkles size={20} />
           </span>
-          <span className="bg-gradient-to-r from-primary to-primary/60 bg-clip-text text-transparent">
+          <span className="text-black">
             Test Sequence Generator
           </span>
         </h1>
@@ -24,9 +24,9 @@ export const GeneratorHeader: React.FC = () => {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="rounded-full hover:bg-white/10 transition-all duration-300"
+                  className="rounded-full hover:bg-[#91C8E4]/10 transition-all duration-300"
                 >
-                  <Save size={18} className="text-primary/80 hover:text-primary transition-colors" />
+                  <Save size={18} className="text-[#91C8E4] hover:text-[#91C8E4] transition-colors" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -39,9 +39,9 @@ export const GeneratorHeader: React.FC = () => {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="rounded-full hover:bg-white/10 transition-all duration-300"
+                  className="rounded-full hover:bg-[#91C8E4]/10 transition-all duration-300"
                 >
-                  <Download size={18} className="text-primary/80 hover:text-primary transition-colors" />
+                  <Download size={18} className="text-[#91C8E4] hover:text-[#91C8E4] transition-colors" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
@@ -54,9 +54,9 @@ export const GeneratorHeader: React.FC = () => {
                 <Button 
                   variant="ghost" 
                   size="icon" 
-                  className="rounded-full hover:bg-white/10 transition-all duration-300"
+                  className="rounded-full hover:bg-[#91C8E4]/10 transition-all duration-300"
                 >
-                  <Share size={18} className="text-primary/80 hover:text-primary transition-colors" />
+                  <Share size={18} className="text-[#91C8E4] hover:text-[#91C8E4] transition-colors" />
                 </Button>
               </TooltipTrigger>
               <TooltipContent>
