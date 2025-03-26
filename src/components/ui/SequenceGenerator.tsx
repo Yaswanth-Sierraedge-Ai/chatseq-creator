@@ -4,13 +4,12 @@ import { useSequenceStore } from '../../store/sequenceStore';
 import { Button } from '@/components/ui/button';
 import { Textarea } from '@/components/ui/textarea';
 import { GeneratorHeader } from './GeneratorHeader';
-import { Send, User, Bot, Loader, Sparkles } from 'lucide-react';
+import { Send, User, Bot, Loader, Sparkles, ServerCrash } from 'lucide-react';
 import { toast } from 'sonner';
 import axios from 'axios';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { cn } from '@/lib/utils';
-
-const API_URL = 'http://localhost:8000/api';
+import { generateSequence } from '../../services/apiService';
 
 export const SequenceGenerator: React.FC = () => {
   const { currentSequence, updateSequence, addSequence } = useSequenceStore();
@@ -35,9 +34,8 @@ export const SequenceGenerator: React.FC = () => {
     setIsGenerating(true);
     
     try {
-      // Call the backend to generate the test sequence
-      const response = await axios.post(`${API_URL}/generate`, { prompt: prompt.trim() });
-      const generatedContent = response.data.generatedContent;
+      // Call the API service to generate the test sequence
+      const { generatedContent } = await generateSequence({ prompt: prompt.trim() });
       
       if (currentSequence) {
         await updateSequence(currentSequence.id, generatedContent);
@@ -54,11 +52,26 @@ export const SequenceGenerator: React.FC = () => {
       toast.success("Test sequence generated successfully");
     } catch (error) {
       console.error("Error generating sequence:", error);
-      toast.error("Failed to generate test sequence");
+      
+      let errorMessage = "Failed to generate test sequence";
+      
+      if (axios.isAxiosError(error)) {
+        if (error.code === 'ERR_NETWORK') {
+          errorMessage = "Network error: Cannot connect to the backend server. Make sure the FastAPI server is running at http://localhost:8000.";
+        } else if (error.response?.status === 401) {
+          errorMessage = "Authentication error: Invalid API key. Please check your settings.";
+        } else if (error.response?.data?.detail) {
+          errorMessage = `API error: ${error.response.data.detail}`;
+        }
+      } else if (error instanceof Error) {
+        errorMessage = error.message;
+      }
+      
+      toast.error(errorMessage);
       
       setConversation(prev => [...prev, { 
         role: 'assistant', 
-        content: "Sorry, there was an error generating the test sequence. Please try again." 
+        content: `Sorry, there was an error generating the test sequence: ${errorMessage}. Please make sure the FastAPI backend is running and your API key is valid.` 
       }]);
     } finally {
       setIsGenerating(false);

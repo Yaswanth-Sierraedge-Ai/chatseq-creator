@@ -2,16 +2,18 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { MainLayout } from '../components/layout/MainLayout';
-import { ArrowLeft, Key, Eye, EyeOff } from 'lucide-react';
+import { ArrowLeft, Key, Eye, EyeOff, ServerCrash } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { Textarea } from '@/components/ui/textarea';
 import { toast } from 'sonner';
+import { validateApiKey } from '../services/apiService';
 
 const Settings = () => {
   const navigate = useNavigate();
   const [apiKey, setApiKey] = useState('');
   const [showApiKey, setShowApiKey] = useState(false);
+  const [validating, setValidating] = useState(false);
   
   // Load API key from localStorage on mount
   React.useEffect(() => {
@@ -21,13 +23,34 @@ const Settings = () => {
     }
   }, []);
   
-  const handleSaveApiKey = () => {
-    localStorage.setItem('api_key', apiKey);
-    toast.success('API key saved successfully');
+  const handleSaveApiKey = async () => {
+    if (!apiKey.trim()) {
+      toast.error('Please enter an API key');
+      return;
+    }
+    
+    setValidating(true);
+    try {
+      const result = await validateApiKey(apiKey);
+      if (result.valid) {
+        localStorage.setItem('api_key', apiKey);
+        toast.success('API key validated and saved successfully');
+      } else {
+        toast.error(`API key validation failed: ${result.message}`);
+      }
+    } catch (error) {
+      toast.error('Failed to validate API key');
+    } finally {
+      setValidating(false);
+    }
   };
   
   const toggleShowApiKey = () => {
     setShowApiKey(!showApiKey);
+  };
+  
+  const handleCheckApiStatus = () => {
+    navigate('/api-status');
   };
   
   return (
@@ -81,9 +104,22 @@ const Settings = () => {
                 </p>
               </div>
               
-              <div className="pt-2">
-                <Button onClick={handleSaveApiKey}>
-                  Save API Key
+              <div className="pt-2 flex gap-3">
+                <Button 
+                  onClick={handleSaveApiKey}
+                  disabled={validating}
+                  className="bg-[#0084D6] hover:bg-[#0084D6]/90"
+                >
+                  {validating ? 'Validating...' : 'Validate & Save API Key'}
+                </Button>
+                
+                <Button 
+                  variant="outline" 
+                  onClick={handleCheckApiStatus}
+                  className="border-[#0084D6] text-[#0084D6] hover:bg-[#0084D6]/10"
+                >
+                  <ServerCrash size={16} className="mr-2" />
+                  Check Backend Status
                 </Button>
               </div>
             </div>

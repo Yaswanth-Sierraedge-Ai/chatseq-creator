@@ -1,7 +1,9 @@
 
 import axios from 'axios';
 
-const API_ENDPOINT = 'https://chat01.ai/v1/chat/completions';
+// Update to use FastAPI backend
+const API_ENDPOINT = 'http://localhost:8000/api';
+const AI_ENDPOINT = 'https://chat01.ai/v1/chat/completions';
 const DEFAULT_MODEL = 'gpt-4o';
 const DEFAULT_TEMPERATURE = 0.1;
 
@@ -24,34 +26,51 @@ export const generateSequence = async ({
   }
   
   try {
-    const response = await axios.post(
-      API_ENDPOINT,
-      {
-        model,
-        messages: [
-          {
-            role: 'system',
-            content: 'You are an expert AI assistant specialized in test sequence generation. Generate a test sequence based on the user prompt.'
-          },
-          {
-            role: 'user',
-            content: prompt
+    // First try the FastAPI backend
+    try {
+      const response = await axios.post(
+        `${API_ENDPOINT}/generate`,
+        { prompt }
+      );
+      
+      return {
+        generatedContent: response.data.generatedContent,
+        success: true
+      };
+    } catch (backendError) {
+      console.log('FastAPI backend error:', backendError);
+      console.log('Falling back to direct API call...');
+      
+      // If FastAPI fails, fall back to direct API call
+      const response = await axios.post(
+        AI_ENDPOINT,
+        {
+          model,
+          messages: [
+            {
+              role: 'system',
+              content: 'You are an expert AI assistant specialized in test sequence generation. Generate a test sequence based on the user prompt.'
+            },
+            {
+              role: 'user',
+              content: prompt
+            }
+          ],
+          temperature
+        },
+        {
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
           }
-        ],
-        temperature
-      },
-      {
-        headers: {
-          'Authorization': `Bearer ${apiKey}`,
-          'Content-Type': 'application/json'
         }
-      }
-    );
-    
-    return {
-      generatedContent: response.data.choices[0].message.content,
-      success: true
-    };
+      );
+      
+      return {
+        generatedContent: response.data.choices[0].message.content,
+        success: true
+      };
+    }
   } catch (error) {
     console.error('API Error:', error);
     
@@ -75,7 +94,7 @@ export const generateSequence = async ({
 export const validateApiKey = async (apiKey: string) => {
   try {
     const response = await axios.post(
-      API_ENDPOINT,
+      AI_ENDPOINT,
       {
         model: DEFAULT_MODEL,
         messages: [
