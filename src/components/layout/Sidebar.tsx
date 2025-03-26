@@ -93,7 +93,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) =>
                     )}
                   >
                     <Code size={15} className="mr-2 shrink-0" />
-                    <span className="truncate">{sequence.name}</span>
+                    <span className="truncate">{sequence.title}</span>
                   </Button>
                 </li>
               ))}
@@ -118,7 +118,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) =>
                   <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 z-50 hidden group-hover:block">
                     <Card className="shadow-md">
                       <CardContent className="p-2 text-xs whitespace-nowrap">
-                        {sequence.name}
+                        {sequence.title}
                       </CardContent>
                     </Card>
                   </div>
