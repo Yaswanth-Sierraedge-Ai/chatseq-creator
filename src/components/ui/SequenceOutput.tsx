@@ -24,19 +24,19 @@ export const SequenceOutput: React.FC<SequenceOutputProps> = ({ content }) => {
   }
   
   return (
-    <div className="relative h-full rounded-lg overflow-hidden border border-border/30 shadow-sm bg-background/30 backdrop-blur-sm">
-      <div className="flex items-center justify-between bg-secondary/50 px-3 py-2 border-b border-border/30">
+    <div className="relative h-full rounded-xl overflow-hidden border border-white/10 shadow-lg backdrop-blur-md bg-white/5">
+      <div className="flex items-center justify-between bg-white/5 px-3 py-2 border-b border-white/10">
         <div className="flex items-center gap-2 text-sm font-medium">
-          <Code size={14} />
-          <span>Generated Code</span>
+          <Code size={14} className="text-primary/80" />
+          <span className="bg-gradient-to-r from-primary/90 to-primary/60 bg-clip-text text-transparent">Generated Code</span>
         </div>
         <Button
           variant="ghost"
           size="icon"
           onClick={copyToClipboard}
           className={cn(
-            "h-7 w-7 transition-all",
-            copied ? "text-green-500" : "text-muted-foreground hover:text-foreground"
+            "h-7 w-7 transition-all rounded-full",
+            copied ? "text-green-500 bg-green-500/10" : "text-muted-foreground hover:text-foreground hover:bg-white/10"
           )}
         >
           {copied ? <Check size={14} /> : <Clipboard size={14} />}
