@@ -1,50 +1,33 @@
 
 import React from 'react';
-import { Button } from '@/components/ui/button';
-import { Clipboard, Check, Code } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { toast } from 'sonner';
 
 interface SequenceOutputProps {
   content: string;
+  className?: string;
 }
 
-export const SequenceOutput: React.FC<SequenceOutputProps> = ({ content }) => {
-  const [copied, setCopied] = React.useState(false);
-  
-  const copyToClipboard = () => {
-    navigator.clipboard.writeText(content);
-    setCopied(true);
-    toast.success("Code copied to clipboard");
-    setTimeout(() => setCopied(false), 2000);
-  };
-  
-  if (!content) {
-    return null;
-  }
+export const SequenceOutput: React.FC<SequenceOutputProps> = ({ 
+  content,
+  className
+}) => {
+  const formattedContent = React.useMemo(() => {
+    // Check if the content is JSON, and pretty print if it is
+    try {
+      const jsonContent = JSON.parse(content);
+      return JSON.stringify(jsonContent, null, 2);
+    } catch (e) {
+      // Not JSON, return as is
+      return content;
+    }
+  }, [content]);
   
   return (
-    <div className="relative h-full rounded-xl overflow-hidden shadow-md bg-white">
-      <div className="flex items-center justify-between bg-[#0084D6]/10 px-3 py-2">
-        <div className="flex items-center gap-2 text-sm font-medium">
-          <Code size={14} className="text-[#0084D6]" />
-          <span className="text-black">Generated Code</span>
-        </div>
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={copyToClipboard}
-          className={cn(
-            "h-7 w-7 transition-all rounded-full",
-            copied ? "text-green-500 bg-green-500/10" : "text-muted-foreground hover:text-black hover:bg-[#0084D6]/10"
-          )}
-        >
-          {copied ? <Check size={14} /> : <Clipboard size={14} />}
-        </Button>
-      </div>
-      <pre className="overflow-auto p-4 text-sm max-h-[calc(100vh-10rem)]">
-        <code className="whitespace-pre-wrap text-xs font-mono text-black">{content}</code>
-      </pre>
-    </div>
+    <pre className={cn(
+      "bg-white font-mono text-xs sm:text-sm overflow-auto rounded p-4 w-full h-full whitespace-pre-wrap",
+      className
+    )}>
+      {formattedContent}
+    </pre>
   );
 };
