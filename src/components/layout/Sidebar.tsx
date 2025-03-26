@@ -1,7 +1,7 @@
 
 import React from 'react';
 import { useSequenceStore, type Sequence } from '../../store/sequenceStore';
-import { Code, ChevronLeft, ChevronRight, Trash, Bot, Sparkles } from 'lucide-react';
+import { Code, ChevronLeft, ChevronRight, Bot, Sparkles } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import { SequenceOutput } from '../ui/SequenceOutput';
@@ -14,7 +14,7 @@ interface SidebarProps {
 }
 
 export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) => {
-  const { sequences, currentSequence, setCurrentSequence, deleteSequence, loading, error } = useSequenceStore();
+  const { sequences, currentSequence, setCurrentSequence, loading, error } = useSequenceStore();
 
   React.useEffect(() => {
     if (error) {
@@ -25,14 +25,14 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) =>
   return (
     <aside
       className={cn(
-        "fixed right-0 top-0 z-40 h-screen border-l border-black transition-all duration-300 ease-in-out",
+        "fixed right-0 top-0 z-40 h-screen transition-all duration-300 ease-in-out shadow-lg",
         collapsed ? "w-16" : "w-72",
         "bg-white"
       )}
     >
       <div className="flex h-full flex-col">
         {/* Sidebar header */}
-        <div className="flex h-16 items-center justify-between px-4 border-b border-black">
+        <div className="flex h-16 items-center justify-between px-4">
           {!collapsed && (
             <h2 className="text-xl font-medium tracking-tight flex items-center gap-2">
               <Sparkles size={18} className="text-[#91C8E4]" />
@@ -84,7 +84,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) =>
 
         {/* Sequences list */}
         {!collapsed && sequences.length > 0 && (
-          <div className="border-t border-black p-3">
+          <div className="p-3">
             <h3 className="text-xs font-medium text-black mb-2 px-1">RECENT SEQUENCES</h3>
             <ul className="space-y-1.5">
               {sequences.map((sequence) => (
@@ -111,7 +111,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) =>
 
         {/* Sequences list in collapsed sidebar */}
         {collapsed && (
-          <div className="mt-auto border-t border-black p-4">
+          <div className="mt-auto p-4">
             <ul className="space-y-2">
               {sequences.slice(0, 5).map((sequence) => (
                 <li key={sequence.id} className="relative group">
@@ -129,7 +129,7 @@ export const Sidebar: React.FC<SidebarProps> = ({ collapsed, toggleSidebar }) =>
                     <Code size={16} />
                   </Button>
                   <div className="absolute left-full ml-2 top-1/2 -translate-y-1/2 z-50 hidden group-hover:block">
-                    <Card className="shadow-sm border-black bg-white">
+                    <Card className="shadow-sm bg-white">
                       <CardContent className="p-2 text-xs whitespace-nowrap">
                         {sequence.title}
                       </CardContent>

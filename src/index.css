@@ -17,33 +17,33 @@
     --popover: 0 0% 100%;
     --popover-foreground: 0 0% 0%;
 
-    --primary: 199 53% 73%;
-    --primary-foreground: 0 0% 0%;
+    --primary: 204 100% 42%;
+    --primary-foreground: 0 0% 100%;
 
-    --secondary: 0 0% 96%;
-    --secondary-foreground: 0 0% 0%;
+    --secondary: 204 100% 42%;
+    --secondary-foreground: 0 0% 100%;
 
     --muted: 0 0% 96%;
     --muted-foreground: 0 0% 45%;
 
-    --accent: 199 53% 73%;
-    --accent-foreground: 0 0% 0%;
+    --accent: 204 100% 42%;
+    --accent-foreground: 0 0% 100%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 98%;
 
     --border: 0 0% 0%;
     --input: 0 0% 89%;
-    --ring: 199 53% 73%;
+    --ring: 204 100% 42%;
     
     --sidebar-background: 0 0% 100%;
     --sidebar-foreground: 0 0% 0%;
-    --sidebar-primary: 199 53% 73%;
-    --sidebar-primary-foreground: 0 0% 0%;
+    --sidebar-primary: 204 100% 42%;
+    --sidebar-primary-foreground: 0 0% 100%;
     --sidebar-accent: 0 0% 96%;
     --sidebar-accent-foreground: 0 0% 0%;
     --sidebar-border: 0 0% 0%;
-    --sidebar-ring: 199 53% 73%;
+    --sidebar-ring: 204 100% 42%;
   }
 }
 
@@ -68,7 +68,6 @@
   background: rgba(255, 255, 255, 0.8);
   backdrop-filter: blur(10px);
   -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(0, 0, 0, 0.1);
 }
 
 /* Transitions */
@@ -95,12 +94,12 @@
 }
 
 ::-webkit-scrollbar-thumb {
-  background: rgba(145, 200, 228, 0.5);
+  background: rgba(0, 132, 214, 0.3);
   border-radius: 3px;
 }
 
 ::-webkit-scrollbar-thumb:hover {
-  background: rgba(145, 200, 228, 0.8);
+  background: rgba(0, 132, 214, 0.6);
 }
 
 /* Animation utilities */
@@ -121,4 +120,15 @@
 
 .text-gradient {
   @apply bg-clip-text text-transparent bg-gradient-to-r from-primary to-primary/60;
+}
+
+/* Remove the outline when focusing */
+*:focus {
+  outline: none;
+}
+
+/* Smooth transitions */
+.transition-all {
+  transition-property: all;
+  transition-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
 }
